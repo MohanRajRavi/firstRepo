@@ -13,6 +13,8 @@
            xmlns:sca-ext="http://xmlns.oracle.com/sca/1.0-ext">
   <import namespace="http://xmlns.oracle.com/JMStoConsume/Jmscons/BPELProcess1" location="WSDLs/BPELProcess1.wsdl"
           importType="wsdl"/>
+  <import namespace="http://xmlns.oracle.com/pcbpel/adapter/jms/JMStoConsume/Jmscons/jmsadaptertoreceive"
+          location="WSDLs/jmsadaptertoreceive.wsdl" importType="wsdl"/>
   <service name="bpelprocess1_client_ep" ui:wsdlLocation="WSDLs/BPELProcess1.wsdl">
     <interface.wsdl interface="http://xmlns.oracle.com/JMStoConsume/Jmscons/BPELProcess1#wsdl.interface(BPELProcess1)"
                     callbackInterface="http://xmlns.oracle.com/JMStoConsume/Jmscons/BPELProcess1#wsdl.interface(BPELProcess1Callback)"/>
@@ -20,6 +22,12 @@
     <callback>
       <binding.ws port="http://xmlns.oracle.com/JMStoConsume/Jmscons/BPELProcess1#wsdl.endpoint(bpelprocess1_client_ep/BPELProcess1Callback_pt)"/>
     </callback>
+  </service>
+  <service name="jmsadaptertoreceive" ui:wsdlLocation="WSDLs/jmsadaptertoreceive.wsdl">
+    <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/jms/JMStoConsume/Jmscons/jmsadaptertoreceive#wsdl.interface(Consume_Message_ptt)"/>
+    <binding.jca config="Adapters/jmsadaptertoreceive_jms.jca">
+      <property name="useRejectedMessageRecovery" type="xs:string" many="false" override="may">true</property>
+    </binding.jca>
   </service>
   <property name="productVersion" type="xs:string" many="false">12.2.1.0.0.151013</property>
   <property name="compositeID" type="xs:string" many="false">bf70c3b1-462d-4688-8960-994994d0cb5e</property>
@@ -30,11 +38,18 @@
         <interface.wsdl interface="http://xmlns.oracle.com/JMStoConsume/Jmscons/BPELProcess1#wsdl.interface(BPELProcess1)"
                         callbackInterface="http://xmlns.oracle.com/JMStoConsume/Jmscons/BPELProcess1#wsdl.interface(BPELProcess1Callback)"/>
       </service>
+      <service name="jmsadaptertoreceive" ui:wsdlLocation="WSDLs/jmsadaptertoreceive.wsdl">
+        <interface.wsdl interface="http://xmlns.oracle.com/pcbpel/adapter/jms/JMStoConsume/Jmscons/jmsadaptertoreceive#wsdl.interface(Consume_Message_ptt)"/>
+      </service>
     </componentType>
     <property name="bpel.config.oneWayDeliveryPolicy" type="xs:string" many="false">async.persist</property>
   </component>
   <wire>
     <source.uri>bpelprocess1_client_ep</source.uri>
     <target.uri>BPELProcess1/bpelprocess1_client</target.uri>
+  </wire>
+  <wire>
+    <source.uri>jmsadaptertoreceive</source.uri>
+    <target.uri>BPELProcess1/jmsadaptertoreceive</target.uri>
   </wire>
 </composite>
